@@ -6,69 +6,85 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Country;
 
-class ImportCountriesRest extends Command
+class ImportCountries extends Command
 {
-    protected $signature = 'countries:coordinates';
+    protected $signature = 'countries:import';
 
-    protected $description = 'Update country coordinates from REST Countries API';
+    protected $description = 'Import Countries From REST Countries API';
 
     public function handle()
     {
-        $this->info('Mengambil koordinat negara...');
+        $this->info('Mengambil data negara...');
 
         $response = Http::timeout(60)
-            ->get('https://restcountries.com/v3.1/all?fields=name,cca3,latlng');
+            ->get('https://restcountries.com/v3.1/all?fields=name,cca3,capital,region,subregion,population,currencies,flags,latlng');
 
         if (!$response->successful()) {
 
-            $this->error('API gagal diakses.');
+            $this->error('API gagal.');
 
             return;
         }
 
-        $apiCountries = collect($response->json());
-        $this->info('Jumlah data API : '.$apiCountries->count());
+        $countries = $response->json();
 
-dd(
-    $apiCountries->firstWhere('cca3','IDN'),
-    $apiCountries->firstWhere('cca3','BGD'),
-    $apiCountries->firstWhere('cca3','BEL')
-);
+        $this->info('Jumlah API : '.count($countries));
 
-        $updated = 0;
+        foreach ($countries as $item) {
 
-        foreach (Country::all() as $country) {
+            $currency = null;
+            $symbol = null;
 
-            // Cari berdasarkan kode ISO3
-            $api = $apiCountries->first(function ($item) use ($country) {
+            if(isset($item['currencies'])){
 
-                return isset($item['cca3'])
-                    && strtoupper($item['cca3']) == strtoupper($country->code);
+                $key = array_key_first($item['currencies']);
 
-            });
+                $currency = $key;
 
-            if (!$api) {
-                continue;
+                $symbol = $item['currencies'][$key]['symbol'] ?? null;
             }
 
-            if (!isset($api['latlng'][0])) {
-                continue;
-            }
+            Country::updateOrCreate(
 
-            $country->update([
+                [
+                    'code'=>$item['cca3']
+                ],
 
-                'latitude' => $api['latlng'][0],
-                'longitude' => $api['latlng'][1],
+                [
 
-            ]);
+                    'name'=>$item['name']['common'] ?? '',
 
-            $updated++;
+                    'capital'=>$item['capital'][0] ?? '-',
+
+                    'region'=>$item['region'] ?? '-',
+
+                    'subregion'=>$item['subregion'] ?? '-',
+
+                    'population'=>$item['population'] ?? 0,
+
+                    'currency'=>$currency,
+
+                    'currency_symbol'=>$symbol,
+
+                    'flag'=>$item['flags']['png'] ?? '',
+
+                    'latitude'=>$item['latlng'][0] ?? null,
+
+                    'longitude'=>$item['latlng'][1] ?? null,
+
+                ]
+
+            );
+
         }
 
-        $this->newLine();
+        $this->info('=============================');
 
-        $this->info("Koordinat berhasil diperbarui.");
-        $this->line("Data diproses : {$updated}");
-        $this->line("Total Country : ".Country::count());
+        $this->info('Import selesai');
+
+        $this->info('Total Negara : '.Country::count());
+
+        $this->info('=============================');
+
     }
 }

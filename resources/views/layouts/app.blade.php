@@ -7,12 +7,8 @@
 
     @vite(['resources/css/app.css','resources/js/app.js'])
 
-    <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -38,46 +34,52 @@
         <!-- Menu -->
         <nav class="flex-1 p-4 space-y-2">
 
+            <!-- Dashboard -->
             <a href="{{ route('dashboard') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('dashboard') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('dashboard') ? 'bg-blue-600' : '' }}">
                 📊 Dashboard
             </a>
 
+            <!-- Countries -->
             <a href="{{ route('countries.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('countries.*') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('countries.*') ? 'bg-blue-600' : '' }}">
                 🌍 Countries
             </a>
 
+            <!-- Country Comparison -->
+            <a href="{{ route('comparison.index') }}"
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('comparison.*') ? 'bg-blue-600' : '' }}">
+                ⚖️ Country Comparison
+            </a>
+
+            <!-- Weather -->
             <a href="{{ route('weather.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('weather.*') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('weather.*') ? 'bg-blue-600' : '' }}">
                 🌤 Weather
             </a>
 
+            <!-- Ports -->
             <a href="{{ route('ports.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('ports.*') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('ports.*') ? 'bg-blue-600' : '' }}">
                 🚢 Ports
             </a>
 
+            <!-- Economy -->
             <a href="{{ route('economy.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('economy.*') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('economy.*') ? 'bg-blue-600' : '' }}">
                 💰 Economy
             </a>
 
+            <!-- News -->
             <a href="{{ route('news.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('news.*') ? 'bg-blue-600' : '' }}">
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('news.*') ? 'bg-blue-600' : '' }}">
                 📰 News
             </a>
 
+            <!-- Risk Score -->
             <a href="{{ route('risk-scores.index') }}"
-               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition
-               {{ request()->routeIs('risk-scores.*') ? 'bg-blue-600' : '' }}">
-                ⚠ Risk Scores
+               class="block px-4 py-3 rounded-lg hover:bg-slate-700 transition {{ request()->routeIs('risk-scores.*') ? 'bg-blue-600' : '' }}">
+                ⚠️ Risk Scores
             </a>
 
         </nav>
@@ -87,16 +89,22 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
 
-        <!-- Navbar -->
+        <!-- Header -->
         <header class="bg-white shadow-md px-8 py-5 flex justify-between items-center">
 
-            <h1 class="text-3xl font-bold text-slate-800">
-                Global Supply Chain Risk Intelligence
-            </h1>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">
+                    Global Supply Chain Risk Intelligence
+                </h1>
+
+                <p class="text-sm text-gray-500">
+                    Monitor • Analyze • Compare Global Supply Chain Risk
+                </p>
+            </div>
 
             <div class="flex items-center gap-5">
 
-                <span class="text-slate-700 font-semibold">
+                <span class="font-semibold text-slate-700">
                     👤 {{ Auth::user()->name }}
                 </span>
 
@@ -104,7 +112,7 @@
                     @csrf
 
                     <button
-                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
                         Logout
                     </button>
 
@@ -117,43 +125,32 @@
         <!-- Content -->
         <main class="flex-1 p-8">
 
-    <div class="max-w-7xl mx-auto">
+            <div class="max-w-7xl mx-auto">
 
-        {{-- Success Message --}}
-        @if(session('success'))
+                @if(session('success'))
+                    <div class="mb-5 rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-green-800">
+                        ✅ {{ session('success') }}
+                    </div>
+                @endif
 
-            <div
-                class="mb-6 bg-green-100 border border-green-300 text-green-800 px-5 py-4 rounded-lg">
+                @if(session('error'))
+                    <div class="mb-5 rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-red-800">
+                        ❌ {{ session('error') }}
+                    </div>
+                @endif
 
-                ✅ {{ session('success') }}
-
-            </div>
-
-        @endif
-
-        {{-- Error Message --}}
-        @if(session('error'))
-
-            <div
-                class="mb-6 bg-red-100 border border-red-300 text-red-800 px-5 py-4 rounded-lg">
-
-                ❌ {{ session('error') }}
+                @yield('content')
 
             </div>
 
-        @endif
-
-        @yield('content')
-
-    </div>
-
-</main>
+        </main>
 
     </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 @stack('scripts')
 
 </body>

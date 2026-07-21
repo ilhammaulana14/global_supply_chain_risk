@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PortController;
 use App\Http\Controllers\Admin\EconomyController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\RiskScoreController;
+use App\Http\Controllers\ComparisonController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -99,6 +100,35 @@ Route::middleware(['auth'])->group(function () {
         ->name('risk-scores.index');
 
     Route::get('/risk-scores/generate', [RiskScoreController::class, 'generate'])
-        ->name('risk.generate');
+    ->name('risk.generate');
+
+        Route::get('/comparison', [ComparisonController::class, 'index'])
+    ->name('comparison.index');
+
+Route::post('/comparison', [ComparisonController::class, 'compare'])
+    ->name('comparison.compare');
 
 });
+
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminPortController;
+
+
+
+Route::middleware(['auth','admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function(){
+
+        Route::get('/dashboard',
+            [AdminDashboardController::class,'index']
+        )->name('dashboard');
+
+        Route::resource('users', UserController::class);
+
+        Route::resource('ports', AdminPortController::class);
+
+        Route::resource('articles', ArticleController::class);
+
+    });

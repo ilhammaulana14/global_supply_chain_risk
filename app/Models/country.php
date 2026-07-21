@@ -3,24 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WeatherLog;
+use App\Models\EconomicData;
+use App\Models\RiskScore;
 
 class Country extends Model
 {
     protected $fillable = [
 
-        'name',
-        'code',
-        'capital',
-        'region',
-        'subregion',
-        'population',
-        'currency',
-        'currency_symbol',
-        'flag',
-        'latitude',
-        'longitude'
+    'name',
+    'code',
+    'iso2',
+    'capital',
+    'region',
+    'subregion',
+    'population',
+    'currency',
+    'currency_symbol',
+    'flag',
+    'latitude',
+    'longitude',
 
-    ];
+];
 
     public function weatherLog()
     {
@@ -46,4 +50,6 @@ class Country extends Model
     {
         return $this->hasOne(RiskScore::class);
     }
+
+
 }
