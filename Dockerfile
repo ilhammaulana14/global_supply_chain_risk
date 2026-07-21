@@ -28,7 +28,6 @@ COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 EXPOSE 80
 
 CMD php artisan config:clear && \
-    php artisan cache:clear && \
     php artisan config:cache && \
     php artisan migrate --force && \
     apache2-foreground
