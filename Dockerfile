@@ -19,10 +19,6 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN cp .env.example .env || true
-
-RUN php artisan key:generate || true
-
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 RUN a2enmod rewrite
@@ -31,4 +27,8 @@ COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
-CMD php artisan migrate --force && apache2-foreground
+CMD php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan config:cache && \
+    php artisan migrate --force && \
+    apache2-foreground
