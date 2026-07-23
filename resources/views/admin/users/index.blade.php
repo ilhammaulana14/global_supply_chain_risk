@@ -2,189 +2,80 @@
 
 @section('content')
 
-<div class="bg-white rounded-xl shadow-lg p-8">
+<div style="display:flex; flex-direction:column; gap:24px;">
 
-    <div class="flex justify-between items-center mb-6">
-
-        <div>
-
-            <h2 class="text-3xl font-bold text-gray-800">
-
-                👥 User Management
-
-            </h2>
-
-            <p class="text-gray-500">
-
-                Kelola akun pengguna sistem SCRI.
-
-            </p>
-
+    {{-- Header --}}
+    <div class="card">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="width:40px; height:40px; border-radius:10px; background:#EBF2FF; color:#2563EB; display:flex; align-items:center; justify-content:center; font-size:20px;">👥</span>
+                <div>
+                    <h2 class="section-title">User Management</h2>
+                    <p class="section-subtitle">Kelola akun pengguna sistem SCRI.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Tambah User</a>
         </div>
-
-        <a href="{{ route('admin.users.create') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg">
-
-            + Tambah User
-
-        </a>
-
     </div>
 
-    @if(session('success'))
-
-    <div class="bg-green-100 border border-green-300 text-green-700 p-4 rounded mb-6">
-
-        {{ session('success') }}
-
+    {{-- Search --}}
+    <div class="card">
+        <div class="card-body">
+            <form method="GET" style="display:flex; gap:12px; align-items:center;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Cari nama atau email..." class="search-input" style="flex:1;">
+                <button class="btn btn-primary">Search</button>
+            </form>
+        </div>
     </div>
 
-    @endif
-
-    @if(session('error'))
-
-    <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded mb-6">
-
-        {{ session('error') }}
-
-    </div>
-
-    @endif
-
-    <form method="GET">
-
-        <input
-            type="text"
-            name="search"
-            value="{{ request('search') }}"
-            placeholder="Cari nama atau email..."
-            class="w-full border rounded-lg p-3 mb-6">
-
-    </form>
-
-    <div class="overflow-x-auto">
-
-        <table class="w-full border">
-
-            <thead class="bg-blue-600 text-white">
-
-                <tr>
-
-                    <th class="p-3">No</th>
-
-                    <th class="p-3">Nama</th>
-
-                    <th class="p-3">Email</th>
-
-                    <th class="p-3">Role</th>
-
-                    <th class="p-3">Action</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
+    {{-- Table --}}
+    <div class="card">
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">No</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th style="text-align:center;">Role</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
                 @forelse($users as $user)
-
-                <tr class="border">
-
-                    <td class="p-3">
-
-                        {{ $loop->iteration + ($users->currentPage()-1)*$users->perPage() }}
-
-                    </td>
-
-                    <td class="p-3">
-
-                        {{ $user->name }}
-
-                    </td>
-
-                    <td class="p-3">
-
-                        {{ $user->email }}
-
-                    </td>
-
-                    <td class="p-3">
-
-                        @if($user->role=='admin')
-
-                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded">
-
-                                Admin
-
-                            </span>
-
-                        @else
-
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded">
-
-                                User
-
-                            </span>
-
-                        @endif
-
-                    </td>
-
-                    <td class="p-3 flex gap-2">
-
-                        <a href="{{ route('admin.users.edit',$user) }}"
-                           class="bg-yellow-500 text-white px-3 py-2 rounded">
-
-                            Edit
-
-                        </a>
-
-                        <form
-                            action="{{ route('admin.users.destroy',$user) }}"
-                            method="POST">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                onclick="return confirm('Hapus user ini?')"
-                                class="bg-red-600 text-white px-3 py-2 rounded">
-
-                                Delete
-
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
+                    <tr>
+                        <td style="text-align:center;">{{ $loop->iteration + ($users->currentPage()-1)*$users->perPage() }}</td>
+                        <td style="font-weight:600;">{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td style="text-align:center;">
+                            @if($user->role == 'admin')
+                                <span class="badge badge-red">Admin</span>
+                            @else
+                                <span class="badge badge-green">User</span>
+                            @endif
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-amber" style="padding:6px 14px; font-size:12px;">Edit</a>
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Hapus user ini?')" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
                 @empty
-
-                <tr>
-
-                    <td colspan="5"
-                        class="text-center p-5">
-
-                        Tidak ada data.
-
-                    </td>
-
-                </tr>
-
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:40px; color:#8B95A5;">Tidak ada data.</td>
+                    </tr>
                 @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div class="mt-6">
-
-        {{ $users->links() }}
-
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #F0F2F5; display:flex; justify-content:flex-end;">
+            {{ $users->links() }}
+        </div>
     </div>
 
 </div>

@@ -2,178 +2,81 @@
 
 @section('content')
 
-<div class="bg-white rounded-xl shadow p-8">
+<div style="display:flex; flex-direction:column; gap:24px;">
 
-    <div class="flex justify-between items-center mb-6">
-
-        <div>
-
-            <h1 class="text-4xl font-bold">
-
-                🚢 Port Dataset
-
-            </h1>
-
-            <p class="text-gray-500">
-
-                Kelola dataset pelabuhan.
-
-            </p>
-
+    {{-- Header --}}
+    <div class="card">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="width:40px; height:40px; border-radius:10px; background:#E8F5EF; color:#2D9F6F; display:flex; align-items:center; justify-content:center; font-size:20px;">🚢</span>
+                <div>
+                    <h2 class="section-title">Port Dataset</h2>
+                    <p class="section-subtitle">Kelola dataset pelabuhan.</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.ports.create') }}" class="btn btn-primary">+ Tambah Port</a>
         </div>
-
-        <a href="{{ route('admin.ports.create') }}"
-           class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-
-            + Tambah Port
-
-        </a>
-
     </div>
 
-
-    @if(session('success'))
-
-        <div class="mb-5 bg-green-100 text-green-700 px-4 py-3 rounded">
-
-            {{ session('success') }}
-
+    {{-- Search --}}
+    <div class="card">
+        <div class="card-body">
+            <form method="GET" style="display:flex; gap:12px; align-items:center;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Cari nama pelabuhan..." class="search-input" style="flex:1;">
+                <button class="btn btn-primary">Search</button>
+            </form>
         </div>
+    </div>
 
-    @endif
-
-
-    <form method="GET"
-          class="mb-5">
-
-        <input
-            type="text"
-            name="search"
-            value="{{ request('search') }}"
-            placeholder="Cari nama pelabuhan..."
-            class="w-full border rounded-lg px-4 py-3">
-
-    </form>
-
-
-    <table class="w-full border">
-
-        <thead class="bg-blue-600 text-white">
-
-        <tr>
-
-            <th class="p-3">No</th>
-
-            <th>Port</th>
-
-            <th>Code</th>
-
-            <th>Country</th>
-
-            <th>Congestion</th>
-
-            <th width="180">
-
-                Action
-
-            </th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-
-        @forelse($ports as $port)
-
-            <tr class="border-b hover:bg-gray-50">
-
-                <td class="p-3">
-
-                    {{ $loop->iteration + ($ports->firstItem()-1) }}
-
-                </td>
-
-                <td>
-
-                    {{ $port->name }}
-
-                </td>
-
-                <td>
-
-                    {{ $port->code }}
-
-                </td>
-
-                <td>
-
-                    {{ $port->country->name }}
-
-                </td>
-
-                <td>
-
-                    {{ $port->congestion_level }} %
-
-                </td>
-
-                <td>
-
-                    <div class="flex gap-2">
-
-                        <a href="{{ route('admin.ports.edit',$port) }}"
-                           class="bg-yellow-500 text-white px-4 py-2 rounded">
-
-                            Edit
-
-                        </a>
-
-                        <form action="{{ route('admin.ports.destroy',$port) }}"
-                              method="POST">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button
-                                onclick="return confirm('Hapus port ini?')"
-                                class="bg-red-600 text-white px-4 py-2 rounded">
-
-                                Delete
-
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-        @empty
-
-            <tr>
-
-                <td colspan="6"
-                    class="text-center py-6">
-
-                    Tidak ada data.
-
-                </td>
-
-            </tr>
-
-        @endforelse
-
-        </tbody>
-
-    </table>
-
-    <div class="mt-6">
-
-        {{ $ports->links() }}
-
+    {{-- Table --}}
+    <div class="card">
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">No</th>
+                        <th>Port</th>
+                        <th style="text-align:center;">Code</th>
+                        <th>Country</th>
+                        <th>Congestion</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @forelse($ports as $port)
+                    <tr>
+                        <td style="text-align:center;">{{ $loop->iteration + ($ports->firstItem()-1) }}</td>
+                        <td style="font-weight:600;">{{ $port->name }}</td>
+                        <td style="text-align:center;"><span class="badge badge-blue">{{ $port->code }}</span></td>
+                        <td>{{ $port->country->name }}</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:{{ $port->congestion_level }}%; background:{{ $port->congestion_level < 40 ? '#2D9F6F' : ($port->congestion_level <= 70 ? '#E5A030' : '#E04B4B') }};"></div>
+                            </div>
+                            <p style="font-size:11px; color:#8B95A5; margin-top:4px;">{{ $port->congestion_level }}%</p>
+                        </td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <a href="{{ route('admin.ports.edit', $port) }}" class="btn btn-amber" style="padding:6px 14px; font-size:12px;">Edit</a>
+                                <form action="{{ route('admin.ports.destroy', $port) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Hapus port ini?')" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px; color:#8B95A5;">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #F0F2F5; display:flex; justify-content:flex-end;">
+            {{ $ports->links() }}
+        </div>
     </div>
 
 </div>

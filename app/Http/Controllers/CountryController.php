@@ -10,11 +10,19 @@ class CountryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $countries = Country::with('riskScore')
-            ->orderBy('name')
-            ->paginate(20);
+        $query = Country::with('riskScore')->orderBy('name');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('code', 'like', '%' . $search . '%');
+            });
+        }
+
+        $countries = $query->paginate(20)->withQueryString();
 
         return view('countries.index', compact('countries'));
     }

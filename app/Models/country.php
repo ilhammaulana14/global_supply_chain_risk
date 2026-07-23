@@ -51,5 +51,19 @@ class Country extends Model
         return $this->hasOne(RiskScore::class);
     }
 
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
 
+    public function isFavoritedBy($user = null)
+    {
+        if (!$user) {
+            $user = auth()->user();
+        }
+        if (!$user) {
+            return false;
+        }
+        return $this->favoritedBy()->where('user_id', $user->id)->exists();
+    }
 }

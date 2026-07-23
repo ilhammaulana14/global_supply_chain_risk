@@ -2,274 +2,150 @@
 
 @section('content')
 
-<div class="space-y-8">
+<div style="display:flex; flex-direction:column; gap:24px;">
 
-    {{-- Alert --}}
+    {{-- Alerts --}}
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-5 py-3 rounded-xl">
+        <div class="alert alert-success">
+            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             {{ session('success') }}
         </div>
     @endif
-
     @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-5 py-3 rounded-xl">
+        <div class="alert alert-error">
+            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             {{ session('error') }}
         </div>
     @endif
 
     {{-- Header --}}
-    <div class="flex justify-between items-center">
-
-        <div>
-
-            <h2 class="text-3xl font-bold text-slate-800">
-                🌤 Weather Monitoring
-            </h2>
-
-            <p class="text-gray-500 mt-2">
-                Monitor cuaca seluruh negara secara realtime
-            </p>
-
+    <div class="card">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="width:40px; height:40px; border-radius:10px; background:#EBF2FF; color:#2563EB; display:flex; align-items:center; justify-content:center; font-size:20px;">🌤</span>
+                <div>
+                    <h2 class="section-title">Weather Monitoring</h2>
+                    <p class="section-subtitle">Monitor cuaca seluruh negara secara realtime</p>
+                </div>
+            </div>
+            <form action="{{ route('weather.refresh') }}" method="POST">
+                @csrf
+                <button class="btn btn-primary">🔄 Refresh All</button>
+            </form>
         </div>
-
     </div>
 
-    {{-- Statistik --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-
-        <div class="bg-white rounded-2xl shadow p-6">
-            <p class="text-gray-500">Countries</p>
-            <h2 class="text-4xl font-bold mt-2">{{ $totalCountry }}</h2>
+    {{-- Stats --}}
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:16px;">
+        <div class="stat-card green">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Countries</div>
+                <div class="stat-card-value">{{ $totalCountry }}</div>
+            </div>
         </div>
-
-        <div class="bg-white rounded-2xl shadow p-6">
-            <p class="text-gray-500">Average Temp</p>
-            <h2 class="text-4xl font-bold text-red-500 mt-2">
-                {{ $avgTemp }}°C
-            </h2>
+        <div class="stat-card red">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Average Temp</div>
+                <div class="stat-card-value">{{ $avgTemp }}°C</div>
+            </div>
         </div>
-
-        <div class="bg-white rounded-2xl shadow p-6">
-            <p class="text-gray-500">Average Rain</p>
-            <h2 class="text-4xl font-bold text-blue-500 mt-2">
-                {{ $avgRain }}
-            </h2>
+        <div class="stat-card blue">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Average Rain</div>
+                <div class="stat-card-value">{{ $avgRain }}</div>
+            </div>
         </div>
-
-        <div class="bg-white rounded-2xl shadow p-6">
-            <p class="text-gray-500">Highest Temp</p>
-            <h2 class="text-4xl font-bold text-orange-500 mt-2">
-                {{ $highestTemp }}°C
-            </h2>
+        <div class="stat-card amber">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Highest Temp</div>
+                <div class="stat-card-value">{{ $highestTemp }}°C</div>
+            </div>
         </div>
-
-        <div class="bg-white rounded-2xl shadow p-6">
-            <p class="text-gray-500">Storm Risk</p>
-            <h2 class="text-4xl font-bold text-red-600 mt-2">
-                {{ $stormCount }}
-            </h2>
+        <div class="stat-card red">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Storm Risk Countries</div>
+                <div class="stat-card-value">{{ $stormCount }}</div>
+            </div>
         </div>
-
     </div>
 
     {{-- Search --}}
-    <div class="bg-white rounded-2xl shadow p-6">
-
-        <div class="flex gap-4">
-
-            <form method="GET" class="flex flex-1 gap-4">
-
-                <input
-                    type="text"
-                    name="search"
-                    value="{{ request('search') }}"
-                    placeholder="Search country..."
-                    class="flex-1 border rounded-xl px-4 py-3">
-
-                <button
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl">
-
-                    Search
-
-                </button>
-
+    <div class="card">
+        <div class="card-body">
+            <form method="GET" style="display:flex; gap:12px; align-items:center;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Search country..." class="search-input" style="flex:1;">
+                <button class="btn btn-primary">Search</button>
             </form>
-
-            <form
-                action="{{ route('weather.refresh') }}"
-                method="POST">
-
-                @csrf
-
-                <button
-                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl">
-
-                    🔄 Refresh All
-
-                </button>
-
-            </form>
-
         </div>
-
     </div>
 
     {{-- Table --}}
-    <div class="bg-white rounded-2xl shadow overflow-hidden">
-
-        <table class="min-w-full">
-
-            <thead class="bg-slate-800 text-white">
-
-            <tr>
-
-                <th class="px-5 py-4">No</th>
-                <th class="px-5 py-4 text-left">Country</th>
-                <th class="px-5 py-4 text-center">Temperature</th>
-                <th class="px-5 py-4 text-center">Rainfall</th>
-                <th class="px-5 py-4 text-center">Wind</th>
-                <th class="px-5 py-4 text-center">Storm</th>
-                <th class="px-5 py-4 text-center">Action</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            @forelse($countries as $country)
-
-                <tr class="border-b hover:bg-gray-50">
-
-                    <td class="text-center">
-                        {{ $countries->firstItem() + $loop->index }}
-                    </td>
-
-                    <td class="px-5 py-4 font-semibold">
-                        {{ $country->name }}
-                    </td>
-
-                    <td class="text-center">
-
-                        @if($country->weatherLog)
-
-                            @php
-                                $temp = $country->weatherLog->temperature;
-                            @endphp
-
-                            @if($temp >= 35)
-
-                                <span class="bg-red-500 text-white px-3 py-1 rounded-full">
-
-                            @elseif($temp >= 25)
-
-                                <span class="bg-yellow-400 px-3 py-1 rounded-full">
-
+    <div class="card">
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">No</th>
+                        <th>Country</th>
+                        <th style="text-align:center;">Temperature</th>
+                        <th style="text-align:center;">Rainfall</th>
+                        <th style="text-align:center;">Wind</th>
+                        <th style="text-align:center;">Storm</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @forelse($countries as $country)
+                    <tr>
+                        <td style="text-align:center;">{{ $countries->firstItem() + $loop->index }}</td>
+                        <td style="font-weight:600;">{{ $country->name }}</td>
+                        <td style="text-align:center;">
+                            @if($country->weatherLog)
+                                @php $temp = $country->weatherLog->temperature; @endphp
+                                @if($temp >= 35)
+                                    <span class="badge badge-red">{{ $temp }}°C</span>
+                                @elseif($temp >= 25)
+                                    <span class="badge badge-amber">{{ $temp }}°C</span>
+                                @else
+                                    <span class="badge badge-blue">{{ $temp }}°C</span>
+                                @endif
                             @else
-
-                                <span class="bg-blue-500 text-white px-3 py-1 rounded-full">
-
+                                <span style="color:#8B95A5;">-</span>
                             @endif
-
-                                {{ $temp }}°C
-
-                                </span>
-
-                        @else
-
-                            -
-
-                        @endif
-
-                    </td>
-
-                    <td class="text-center">
-                        {{ $country->weatherLog->rainfall ?? '-' }}
-                    </td>
-
-                    <td class="text-center">
-                        {{ $country->weatherLog->wind_speed ?? '-' }}
-                    </td>
-
-                    <td class="text-center">
-
-                        @if(!$country->weatherLog)
-
-                            -
-
-                        @elseif($country->weatherLog->storm_risk == 3)
-
-                            <span class="bg-red-600 text-white px-3 py-1 rounded-full">
-                                High
-                            </span>
-
-                        @elseif($country->weatherLog->storm_risk == 2)
-
-                            <span class="bg-yellow-400 px-3 py-1 rounded-full">
-                                Medium
-                            </span>
-
-                        @elseif($country->weatherLog->storm_risk == 1)
-
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full">
-                                Low
-                            </span>
-
-                        @else
-
-                            <span class="bg-gray-300 px-3 py-1 rounded-full">
-                                None
-                            </span>
-
-                        @endif
-
-                    </td>
-
-                    <td class="text-center">
-
-                        <form
-                            action="{{ route('weather.update',$country->id) }}"
-                            method="POST">
-
-                            @csrf
-
-                            <button
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-
-                                Refresh
-
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
-            @empty
-
-                <tr>
-
-                    <td colspan="7" class="text-center py-8 text-gray-500">
-
-                        Tidak ada data.
-
-                    </td>
-
-                </tr>
-
-            @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div class="flex justify-end">
-
-        {{ $countries->links() }}
-
+                        </td>
+                        <td style="text-align:center;">{{ $country->weatherLog->rainfall ?? '-' }}</td>
+                        <td style="text-align:center;">{{ $country->weatherLog->wind_speed ?? '-' }}</td>
+                        <td style="text-align:center;">
+                            @if(!$country->weatherLog)
+                                <span style="color:#8B95A5;">-</span>
+                            @elseif($country->weatherLog->storm_risk == 3)
+                                <span class="badge badge-red">High</span>
+                            @elseif($country->weatherLog->storm_risk == 2)
+                                <span class="badge badge-amber">Medium</span>
+                            @elseif($country->weatherLog->storm_risk == 1)
+                                <span class="badge badge-green">Low</span>
+                            @else
+                                <span class="badge" style="background:#F4F5F7; color:#8B95A5;">None</span>
+                            @endif
+                        </td>
+                        <td style="text-align:center;">
+                            <form action="{{ route('weather.update', $country->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-primary" style="padding:6px 14px; font-size:12px;">Refresh</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:#8B95A5;">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #F0F2F5; display:flex; justify-content:flex-end;">
+            {{ $countries->links() }}
+        </div>
     </div>
 
 </div>

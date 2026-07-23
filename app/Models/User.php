@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function favoriteCountries()
+    {
+        return $this->belongsToMany(Country::class, 'favorites')->withTimestamps();
+    }
 }

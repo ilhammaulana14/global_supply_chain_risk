@@ -1,306 +1,153 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
-<div class="space-y-8">
+<div style="display:flex; flex-direction:column; gap:24px;">
 
     {{-- Header --}}
-    <div>
-
-        <h2 class="text-3xl font-bold text-slate-800">
-            🌍 Supply Chain Risk Dashboard
-        </h2>
-
-        <p class="text-gray-500 mt-2">
-            Global Supply Chain Risk Intelligence Monitoring
-        </p>
-
+    <div class="card">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span style="width:40px; height:40px; border-radius:10px; background:#EBF2FF; color:#2563EB; display:flex; align-items:center; justify-content:center; font-size:20px;">⚙</span>
+                <div>
+                    <h2 class="section-title">Admin Control Panel</h2>
+                    <p class="section-subtitle">SCRI System Administration & Management Hub</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <form action="{{ route('weather.refresh') }}" method="POST" onsubmit="return submitButton(this,'Updating...')">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">🌦 Refresh Weather</button>
+                </form>
+                <form action="{{ route('economy.import') }}" method="POST" onsubmit="return submitButton(this,'Importing...')">
+                    @csrf
+                    <button type="submit" class="btn btn-amber">💰 Import Economy</button>
+                </form>
+                <form action="{{ route('news.generate') }}" method="POST" onsubmit="return submitButton(this,'Generating...')">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary">📰 Generate News</button>
+                </form>
+                <form action="{{ route('risk.generate') }}" method="GET" onsubmit="return submitButton(this,'Calculating...')">
+                    <button type="submit" class="btn btn-danger">⚠ Generate Risk</button>
+                </form>
+            </div>
+        </div>
     </div>
 
-    {{-- Summary Cards --}}
-{{-- Dashboard Action --}}
-<div class="bg-white rounded-xl shadow p-6">
-
-    <h3 class="text-xl font-bold mb-5">
-        ⚙ Dashboard Action
-    </h3>
-
-    <div class="flex flex-wrap gap-4">
-
-        {{-- Refresh Weather --}}
-        <form
-    action="{{ route('weather.refresh') }}"
-    method="POST"
-    onsubmit="return submitButton(this,'Updating Weather...')">
-
-    @csrf
-
-    <button
-        type="submit"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
-
-        🌦 Refresh Weather
-
-    </button>
-
-</form>
-
-        {{-- Import Economy --}}
-        <form
-    action="{{ route('economy.import') }}"
-    method="POST"
-    onsubmit="return submitButton(this,'Importing Economy...')">
-
-    @csrf
-
-    <button
-        type="submit"
-        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
-
-        💰 Import Economy
-
-    </button>
-
-</form>
-
-        {{-- Generate News --}}
-        <form
-    action="{{ route('news.generate') }}"
-    method="POST"
-    onsubmit="return submitButton(this,'Generating News...')">
-
-    @csrf
-
-    <button
-        type="submit"
-        class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg">
-
-        📰 Generate News
-
-    </button>
-
-</form>
-
-        {{-- Generate Risk --}}
-        <form
-    action="{{ route('risk.generate') }}"
-    method="GET"
-    onsubmit="return submitButton(this,'Calculating Risk Score...')">
-
-    <button
-        type="submit"
-        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
-
-        ⚠ Generate Risk Score
-
-    </button>
-
-</form>
-
+    {{-- Stats Grid --}}
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:16px;">
+        <div class="stat-card blue">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Total Users</div>
+                <div class="stat-card-value">{{ $totalUsers }}</div>
+            </div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Total Countries</div>
+                <div class="stat-card-value">{{ $totalCountries }}</div>
+            </div>
+        </div>
+        <div class="stat-card indigo">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Monitored Ports</div>
+                <div class="stat-card-value">{{ $totalPorts }}</div>
+            </div>
+        </div>
+        <div class="stat-card blue">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Weather Records</div>
+                <div class="stat-card-value">{{ $totalWeather }}</div>
+            </div>
+        </div>
+        <div class="stat-card amber">
+            <div class="stat-card-body">
+                <div class="stat-card-label">Economy Records</div>
+                <div class="stat-card-value">{{ $totalEconomy }}</div>
+            </div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-card-body">
+                <div class="stat-card-label">News Articles</div>
+                <div class="stat-card-value">{{ $totalNews }}</div>
+            </div>
+        </div>
     </div>
 
-</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">Countries</p>
-            <h2 class="text-4xl font-bold mt-2">
-                {{ $totalCountries }}
-            </h2>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">Weather</p>
-            <h2 class="text-4xl font-bold text-blue-600 mt-2">
-                {{ $totalWeather }}
-            </h2>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">Ports</p>
-            <h2 class="text-4xl font-bold text-indigo-600 mt-2">
-                {{ $totalPorts }}
-            </h2>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">Economy</p>
-            <h2 class="text-4xl font-bold text-green-600 mt-2">
-                {{ $totalEconomy }}
-            </h2>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">News</p>
-            <h2 class="text-4xl font-bold text-orange-600 mt-2">
-                {{ $totalNews }}
-            </h2>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-            <p class="text-gray-500">High Risk</p>
-            <h2 class="text-4xl font-bold text-red-600 mt-2">
-                {{ $highRisk }}
-            </h2>
-        </div>
-
-    </div>
-
-    {{-- Charts --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <div class="bg-white rounded-xl shadow p-6">
-
-            <h3 class="text-xl font-bold mb-5">
-                📊 Risk Distribution
-            </h3>
-
-            <canvas id="riskChart"></canvas>
-
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6">
-
-            <h3 class="text-xl font-bold mb-5">
-                📈 Top 10 Highest Risk Countries
-            </h3>
-
-            <canvas id="barChart"></canvas>
-
-        </div>
-
-    </div>
-
-    {{-- World Map --}}
-    <div class="bg-white rounded-xl shadow p-6">
-
-        <h3 class="text-xl font-bold mb-5">
-            🌍 Global Supply Chain Risk Map
-        </h3>
-
-        <div
-            id="worldMap"
-            class="rounded-lg border"
-            style="height:600px;">
-        </div>
-
-    </div>
-
-    {{-- Bottom Section --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {{-- Top Risk --}}
-        <div class="bg-white rounded-xl shadow p-6">
-
-            <h3 class="text-xl font-bold mb-4">
-                🔴 Top 10 Highest Risk Countries
-            </h3>
-
-            <table class="min-w-full">
-
-                <thead class="border-b">
-
-                    <tr>
-
-                        <th class="text-left py-3">Country</th>
-                        <th class="text-center">Score</th>
-                        <th class="text-center">Risk</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                @foreach($topRisk as $risk)
-
-                    <tr class="border-b">
-
-                        <td class="py-3">
-                            {{ $risk->country->name }}
-                        </td>
-
-                        <td class="text-center">
-                            {{ $risk->total_score }}
-                        </td>
-
-                        <td class="text-center">
-
-                            @if($risk->risk_level=="High")
-
-                                <span class="bg-red-500 text-white px-3 py-1 rounded-full">
-
-                                    High
-
-                                </span>
-
-                            @elseif($risk->risk_level=="Medium")
-
-                                <span class="bg-yellow-400 px-3 py-1 rounded-full">
-
-                                    Medium
-
-                                </span>
-
-                            @else
-
-                                <span class="bg-green-500 text-white px-3 py-1 rounded-full">
-
-                                    Low
-
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                    </tr>
-
-                @endforeach
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        {{-- Latest News --}}
-        <div class="bg-white rounded-xl shadow p-6">
-
-            <h3 class="text-xl font-bold mb-4">
-
-                📰 Latest News
-
-            </h3>
-
-            @forelse($latestNews as $item)
-
-                <div class="border-b py-3">
-
-                    <p class="font-semibold">
-
-                        {{ $item->title }}
-
-                    </p>
-
-                    <p class="text-gray-500 text-sm">
-
-                        {{ $item->country->name ?? '-' }}
-
-                    </p>
-
+    {{-- Main Admin Rows --}}
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+        
+        {{-- Left: Latest Users --}}
+        <div class="card">
+            <div class="card-body" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; box-sizing:border-box;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                    <div>
+                        <h3 class="section-title" style="font-size:15px;">👥 Latest Registered Users</h3>
+                        <p class="section-subtitle">Recently created user accounts</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary" style="font-size:12px; padding:6px 12px;">Manage Users</a>
                 </div>
 
-            @empty
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th style="text-align:center;">Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($latestUsers as $user)
+                                <tr>
+                                    <td style="font-weight:600;">{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td style="text-align:center;">
+                                        @if($user->role == 'admin')
+                                            <span class="badge badge-red">Admin</span>
+                                        @else
+                                            <span class="badge badge-green">User</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-                <p class="text-gray-500">
+        {{-- Right: System Overview metrics --}}
+        <div class="card">
+            <div class="card-body" style="display:flex; flex-direction:column; justify-content:space-between; height:100%; box-sizing:border-box;">
+                <div style="margin-bottom:16px;">
+                    <h3 class="section-title" style="font-size:15px;">📊 Dataset & Parameter Summary</h3>
+                    <p class="section-subtitle">Real-time status of monitored parameters</p>
+                </div>
 
-                    No news available.
-
-                </p>
-
-            @endforelse
-
+                <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #F0F2F5;">
+                        <span style="color:#8B95A5;">Average Risk Score</span>
+                        <strong style="color:#1A2332;">{{ $averageRisk }}</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #F0F2F5;">
+                        <span style="color:#8B95A5;">Critical Ports (>70% Congestion)</span>
+                        <strong style="color:#E04B4B;">{{ $criticalPorts }} Ports</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #F0F2F5;">
+                        <span style="color:#8B95A5;">Average Congestion Level</span>
+                        <strong style="color:#1A2332;">{{ $averageCongestion }}%</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #F0F2F5;">
+                        <span style="color:#8B95A5;">Average Global Temperature</span>
+                        <strong style="color:#1A2332;">{{ $averageTemperature }} °C</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                        <span style="color:#8B95A5;">High Risk Countries</span>
+                        <strong style="color:#E04B4B;">{{ $highRisk }}</strong>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -310,223 +157,13 @@
 @endsection
 
 @push('scripts')
-
 <script>
-
-console.log("Chart Loaded");
-
-console.log(@json($topRisk));
-
-console.log(@json($mapCountries));
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    // PIE CHART
-
-    new Chart(document.getElementById('riskChart'), {
-
-        type: 'pie',
-
-        data: {
-
-            labels: ['Low','Medium','High'],
-
-            datasets: [{
-
-                data: [
-
-                    {{ $lowRisk }},
-
-                    {{ $mediumRisk }},
-
-                    {{ $highRisk }}
-
-                ],
-
-                backgroundColor: [
-
-                    '#22c55e',
-
-                    '#f59e0b',
-
-                    '#ef4444'
-
-                ]
-
-            }]
-
-        }
-
-    });
-
-    // BAR CHART
-
-    new Chart(document.getElementById('barChart'), {
-
-        type: 'bar',
-
-        data: {
-
-            labels: [
-
-                @foreach($topRisk as $risk)
-
-                    "{{ $risk->country->name }}",
-
-                @endforeach
-
-            ],
-
-            datasets: [{
-
-                label: 'Risk Score',
-
-                data: [
-
-                    @foreach($topRisk as $risk)
-
-                        {{ $risk->total_score }},
-
-                    @endforeach
-
-                ]
-
-            }]
-
-        },
-
-        options: {
-
-            responsive: true,
-
-            scales: {
-
-                y: {
-
-                    beginAtZero: true,
-
-                    max: 100
-
-                }
-
-            }
-
-        }
-
-    });
-
-    // LEAFLET MAP
-
-    const countries = @json($mapCountries);
-
-    const map = L.map('worldMap').setView([20,0],2);
-
-    L.tileLayer(
-
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-
-        {
-
-            attribution:'© OpenStreetMap'
-
-        }
-
-    ).addTo(map);
-
-    countries.forEach(function(country){
-
-        if(country.latitude == null || country.longitude == null){
-
-            return;
-
-        }
-
-        let color="green";
-
-        let score=0;
-
-        let level="-";
-
-        if(country.risk_score){
-
-            score=country.risk_score.total_score;
-
-            level=country.risk_score.risk_level;
-
-            if(level==="High"){
-
-                color="red";
-
-            }else if(level==="Medium"){
-
-                color="orange";
-
-            }
-
-        }
-
-        L.circleMarker(
-
-            [
-
-                country.latitude,
-
-                country.longitude
-
-            ],
-
-            {
-
-                radius:7,
-
-                color:color,
-
-                fillColor:color,
-
-                fillOpacity:0.8
-
-            }
-
-        )
-
-        .addTo(map)
-
-        .bindPopup(
-
-            `<b>${country.name}</b><br>
-            Risk Score : ${score}<br>
-            Risk Level : ${level}`
-
-        );
-
-    });
-
-});
-
-</script>
-@push('scripts')
-
-<script>
-
-function submitButton(form,text){
-
-    if(!confirm("Apakah Anda yakin ingin menjalankan proses ini?")){
-
-        return false;
-
-    }
-
-    let button=form.querySelector("button");
-
-    button.disabled=true;
-
-    button.innerHTML="⏳ "+text;
-
+function submitButton(form, text) {
+    if(!confirm("Are you sure you want to run this process?")) return false;
+    let button = form.querySelector("button");
+    button.disabled = true;
+    button.innerHTML = "⏳ " + text;
     return true;
-
 }
-
 </script>
-
-@endpush
 @endpush

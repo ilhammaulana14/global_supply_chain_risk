@@ -125,40 +125,38 @@ class DashboardController extends Controller
     ]
 ];
 
-$barChart = [
-    'labels' => $topRisk->pluck('country.name'),
-    'scores' => $topRisk->pluck('total_score')
-];
+        $barChart = [
+            'labels' => $topRisk->pluck('country.name'),
+            'scores' => $topRisk->pluck('total_score')
+        ];
 
-        return view('admin.dashboard.index', compact(
+        $favoriteCountries = auth()->user()
+            ? auth()->user()->favoriteCountries()->with('riskScore', 'weatherLog')->get()
+            : collect();
 
-    'totalCountries',
-    'totalWeather',
-    'totalPorts',
-    'totalEconomy',
-    'totalNews',
-
-    'highRisk',
-    'averageTemperature',
-    'averageRainfall',
-    'stormCountry',
-    'averageCongestion',
-    'criticalPorts',
-    'averageGDP',
-    'averageInflation',
-
-    'lowRisk',
-    'mediumRisk',
-
-    'topRisk',
-    'latestNews',
-
-    'mapCountries',
-
-    'chart',
-    'barChart'
-
-));
+        return view('dashboard', compact(
+            'totalCountries',
+            'totalWeather',
+            'totalPorts',
+            'totalEconomy',
+            'totalNews',
+            'highRisk',
+            'averageTemperature',
+            'averageRainfall',
+            'stormCountry',
+            'averageCongestion',
+            'criticalPorts',
+            'averageGDP',
+            'averageInflation',
+            'lowRisk',
+            'mediumRisk',
+            'topRisk',
+            'latestNews',
+            'mapCountries',
+            'chart',
+            'barChart',
+            'favoriteCountries'
+        ));
 
     }   // <-- menutup function index()
 

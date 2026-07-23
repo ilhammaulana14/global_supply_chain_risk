@@ -2,204 +2,93 @@
 
 @section('content')
 
-<div class="bg-white rounded-xl shadow p-8 max-w-4xl">
-
-    <h1 class="text-4xl font-bold mb-2">
-        ✏️ Edit Port
-    </h1>
-
-    <p class="text-gray-500 mb-8">
-        Perbarui data pelabuhan.
-    </p>
-
-    <form action="{{ route('admin.ports.update',$port) }}"
-          method="POST">
-
-        @csrf
-        @method('PUT')
-
-        <div class="grid grid-cols-2 gap-6">
-
-            {{-- Country --}}
-            <div>
-
-                <label class="font-semibold">
-
-                    Negara
-
-                </label>
-
-                <select
-                    name="country_id"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
-
-                    @foreach($countries as $country)
-
-                        <option
-                            value="{{ $country->id }}"
-                            {{ old('country_id',$port->country_id)==$country->id ? 'selected' : '' }}>
-
-                            {{ $country->name }}
-
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-                @error('country_id')
-
-                    <p class="text-red-500 text-sm">
-
-                        {{ $message }}
-
-                    </p>
-
-                @enderror
-
+<div style="max-width:800px; margin:0 auto;">
+    <div class="card">
+        <div class="card-body">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+                <span style="width:40px; height:40px; border-radius:10px; background:#EBF2FF; color:#2563EB; display:flex; align-items:center; justify-content:center; font-size:20px;">✏️</span>
+                <div>
+                    <h2 class="section-title">Edit Port</h2>
+                    <p class="section-subtitle">Perbarui data pelabuhan.</p>
+                </div>
             </div>
 
-            {{-- Code --}}
-            <div>
+            <form action="{{ route('admin.ports.update', $port) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-                <label class="font-semibold">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
 
-                    Kode Port
+                    {{-- Country --}}
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Negara</label>
+                        <select name="country_id" class="search-input" style="width:100%;">
+                            @foreach($countries as $country)
+                                <option value="{{ $country->id }}" {{ old('country_id', $port->country_id) == $country->id ? 'selected' : '' }}>
+                                    {{ $country->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('country_id')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                </label>
+                    {{-- Code --}}
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Kode Port</label>
+                        <input type="text" name="code" value="{{ old('code', $port->code) }}" class="search-input" style="width:100%; box-sizing:border-box;">
+                        @error('code')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                <input
-                    type="text"
-                    name="code"
-                    value="{{ old('code',$port->code) }}"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
+                    {{-- Name --}}
+                    <div style="grid-column:span 2;">
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Nama Pelabuhan</label>
+                        <input type="text" name="name" value="{{ old('name', $port->name) }}" class="search-input" style="width:100%; box-sizing:border-box;">
+                        @error('name')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                @error('code')
+                    {{-- Latitude --}}
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Latitude</label>
+                        <input type="number" step="any" name="latitude" value="{{ old('latitude', $port->latitude) }}" class="search-input" style="width:100%; box-sizing:border-box;">
+                        @error('latitude')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                    <p class="text-red-500 text-sm">
+                    {{-- Longitude --}}
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Longitude</label>
+                        <input type="number" step="any" name="longitude" value="{{ old('longitude', $port->longitude) }}" class="search-input" style="width:100%; box-sizing:border-box;">
+                        @error('longitude')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                        {{ $message }}
+                    {{-- Congestion --}}
+                    <div style="grid-column:span 2;">
+                        <label style="display:block; font-size:12px; font-weight:700; color:#8B95A5; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px;">Tingkat Kemacetan (%)</label>
+                        <input type="number" min="0" max="100" name="congestion_level" value="{{ old('congestion_level', $port->congestion_level) }}" class="search-input" style="width:100%; box-sizing:border-box;">
+                        @error('congestion_level')
+                            <span style="color:#C33B3B; font-size:11px; font-weight:600; margin-top:4px; display:block;">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                    </p>
+                </div>
 
-                @enderror
+                <div style="display:flex; gap:12px; margin-top:32px; border-top:1px solid #F0F2F5; padding-top:20px;">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ route('admin.ports.index') }}" class="btn btn-secondary">Batal</a>
+                </div>
 
-            </div>
-
-            {{-- Name --}}
-            <div class="col-span-2">
-
-                <label class="font-semibold">
-
-                    Nama Pelabuhan
-
-                </label>
-
-                <input
-                    type="text"
-                    name="name"
-                    value="{{ old('name',$port->name) }}"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
-
-                @error('name')
-
-                    <p class="text-red-500 text-sm">
-
-                        {{ $message }}
-
-                    </p>
-
-                @enderror
-
-            </div>
-
-            {{-- Latitude --}}
-            <div>
-
-                <label class="font-semibold">
-
-                    Latitude
-
-                </label>
-
-                <input
-                    type="number"
-                    step="any"
-                    name="latitude"
-                    value="{{ old('latitude',$port->latitude) }}"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
-
-            </div>
-
-            {{-- Longitude --}}
-            <div>
-
-                <label class="font-semibold">
-
-                    Longitude
-
-                </label>
-
-                <input
-                    type="number"
-                    step="any"
-                    name="longitude"
-                    value="{{ old('longitude',$port->longitude) }}"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
-
-            </div>
-
-            {{-- Congestion --}}
-            <div class="col-span-2">
-
-                <label class="font-semibold">
-
-                    Tingkat Kemacetan (%)
-
-                </label>
-
-                <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    name="congestion_level"
-                    value="{{ old('congestion_level',$port->congestion_level) }}"
-                    class="w-full border rounded-lg px-4 py-3 mt-2">
-
-                @error('congestion_level')
-
-                    <p class="text-red-500 text-sm">
-
-                        {{ $message }}
-
-                    </p>
-
-                @enderror
-
-            </div>
-
+            </form>
         </div>
-
-        <div class="mt-8 flex gap-3">
-
-            <button
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
-
-                Update
-
-            </button>
-
-            <a href="{{ route('admin.ports.index') }}"
-               class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-3 rounded-lg">
-
-                Batal
-
-            </a>
-
-        </div>
-
-    </form>
-
+    </div>
 </div>
 
 @endsection

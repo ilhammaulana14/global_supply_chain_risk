@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Admin\WeatherController;
 use App\Http\Controllers\Admin\PortController;
 use App\Http\Controllers\Admin\EconomyController;
@@ -36,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/countries/{country}', [CountryController::class, 'show'])
         ->name('countries.show');
+
+    Route::post('/countries/{country}/favorite', [\App\Http\Controllers\FavoriteController::class, 'toggle'])
+        ->name('countries.favorite');
 
 
     /*
@@ -129,6 +132,6 @@ Route::middleware(['auth','admin'])
 
         Route::resource('ports', AdminPortController::class);
 
-        Route::resource('articles', ArticleController::class);
+        // Route::resource('articles', ArticleController::class);
 
     });
